@@ -1,6 +1,4 @@
 MonthGrid = DayGrid.extend({
-	monthsPerRow: 3,
-
 
 	constructor: function() {
 		Grid.apply(this, arguments);
@@ -90,7 +88,7 @@ MonthGrid = DayGrid.extend({
 	updateCells: function() {
 		this.updateCellDates(); // populates cellDates and dayToCellOffsets
 
-		this.colCnt = this.monthsPerRow;
+		this.colCnt = this.view.opt('monthsPerRow');
 		this.rowCnt = 12 / this.colCnt;
 	},
 
@@ -141,6 +139,73 @@ MonthGrid = DayGrid.extend({
 	computeColHeadFormat: function() {
 		return 'MMMM'; // "January"
 	},
+
+
+	// Builds the inner DOM contents of the segment popover
+	renderSegPopoverContent: function(cell, segs) {
+		var view = this.view;
+		var isTheme = view.opt('theme');
+		var title = cell.start.format(view.opt('monthPopoverFormat'));
+		var content = $(
+			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
+				'<span class="fc-close ' +
+					(isTheme ? 'ui-icon ui-icon-closethick' : 'fc-icon fc-icon-x') +
+				'"></span>' +
+				'<span class="fc-title">' +
+					htmlEscape(title) +
+				'</span>' +
+				'<div class="fc-clear"/>' +
+			'</div>' +
+			'<div class="fc-body ' + view.widgetContentClass + '">' +
+				'<div class="fc-event-container"></div>' +
+			'</div>'
+		);
+		var segContainer = content.find('.fc-event-container');
+		var i;
+
+		// render each seg's `el` and only return the visible segs
+		segs = this.renderFgSegEls(segs, true); // disableResizing=true
+		this.popoverSegs = segs;
+
+		for (i = 0; i < segs.length; i++) {
+
+			// because segments in the popover are not part of a grid coordinate system, provide a hint to any
+			// grids that want to do drag-n-drop about which cell it came from
+			segs[i].cell = cell;
+
+			segContainer.append(segs[i].el);
+		}
+
+		return content;
+	},
+
+	// Given the events within an array of segment objects, reslice them to be in a full month
+	resliceDaySegs: function(segs, dayDate) {
+
+		// build an array of the original events
+		var events = $.map(segs, function(seg) {
+			return seg.event;
+		});
+
+		var dayStart = dayDate.clone().stripTime();
+		var dayEnd = dayStart.clone().add(1, 'month');
+		var dayRange = { start: dayStart, end: dayEnd };
+
+		// slice the events with a custom slicing function
+		segs = this.eventsToSegs(
+			events,
+			function(range) {
+				var seg = intersectionToSeg(range, dayRange); // undefind if no intersection
+				return seg ? [ seg ] : []; // must return an array of segments
+			}
+		);
+
+		// force an order because eventsToSegs doesn't guarantee one
+		segs.sort(compareSegs);
+
+		return segs;
+	},
+
 });
 
 

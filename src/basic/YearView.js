@@ -1,21 +1,23 @@
-YearView = fcViews.year = View.extend({ // make a subclass of View
-	monthGrid: null, // the main subcomponent that does most of the heavy lifting
+YearView = fcViews.year = BasicView.extend({ // make a subclass of View
 
 	initialize: function() {
-		this.monthGrid = new MonthGrid(this);
-		this.monthGrid.monthsPerRow
+		this.dayGrid = new MonthGrid(this);
+		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
 	},
 
+	// Compute the value to feed into setRange. Use base class version.
+	computeRange: function(date) {
+		return View.prototype.computeRange.call(this, date); // get value from the super-method
+	},
+	// Renders the view into `this.el`, which should already be assigned
 	render: function() {
 		this.el.html(this.renderHtml());
-		this.monthGrid.setElement(this.el.find('.fc-month-grid'));
-		this.monthGrid.renderDates();
-	},
+		this.headRowEl = $(); // This element is not in the year view
+		this.scrollerEl = this.el.find('.fc-month-grid-container');
+		this.dayGrid.coordMap.containerEl = this.scrollerEl; // constrain clicks/etc to the dimensions of the scroller
 
-	// Unrenders the content of the view
-	destroy: function() {
-		this.monthGrid.destroyDates();
-		this.monthGrid.removeElement();
+		this.dayGrid.setElement(this.el.find('.fc-month-grid'));
+		this.dayGrid.renderDates(this.hasRigidRows());
 	},
 
 	// Builds the HTML skeleton for the view.
@@ -35,45 +37,13 @@ YearView = fcViews.year = View.extend({ // make a subclass of View
 			'</table>';
 	},
 
-	// Sets the display range and computes all necessary dates
-	setRange: function(range) {
-		View.prototype.setRange.call(this, range); // call the super-method
-		this.monthGrid.setRange(range);
-	},
-
-
-	setHeight: function(height, isAuto) {
-		this.setGridHeight(height, isAuto);
-	},
-
-	// Sets the height of just the MonthGrid component in this view
-	setGridHeight: function(height, isAuto) {
-		if (isAuto) {
-			undistributeHeight(this.monthGrid.rowEls); // let the rows be their natural height with no expanding
-		}
-		else {
-			distributeHeight(this.monthGrid.rowEls, height, true); // true = compensate for height-hogging rows
-		}
-	},
-
-	renderEvents: function(events) {
-		this.monthGrid.renderEvents(events);
-	},
-
-	destroyEvents: function() {
-		this.monthGrid.destroyEvents();
-	},
-
-	renderSelection: function(range) {
-		this.monthGrid.renderSelection(range);
-	},
-
-	destroySelection: function() {
-		this.monthGrid.destroySelection();
-	}
 
 });
 
 
 YearView.duration = { years: 1 };
+YearView.defaults = {
+	monthsPerRow: 3,
+	monthPopoverFormat: 'MMMM'
+};
 

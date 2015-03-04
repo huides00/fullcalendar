@@ -367,5 +367,3 @@ DayGrid.mixin({
 	}
 
 });
-
-DayGrid.mixin(DayGridLimit);

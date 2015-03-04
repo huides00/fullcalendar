@@ -1,0 +1,1 @@
+MonthGrid.mixin(DayGridEvents);

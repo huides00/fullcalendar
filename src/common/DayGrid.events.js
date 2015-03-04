@@ -2,7 +2,7 @@
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-DayGrid.mixin({
+DayGridEvents = {
 
 	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
@@ -288,7 +288,9 @@ DayGrid.mixin({
 		return segRows;
 	}
 
-});
+}
+
+DayGrid.mixin(DayGridEvents);
 
 
 // Computes whether two segments' columns collide. They are assumed to be in the same row.

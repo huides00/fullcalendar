@@ -1,1 +1,0 @@
-MonthGrid.mixin(DayGridLimit);

@@ -1,8 +1,5 @@
-MonthGrid = Grid.extend({
+MonthGrid = DayGrid.extend({
 	monthsPerRow: 3,
-
-	cellDates: null, // flat chronological array of each cell's dates
-	dayToCellOffsets: null, // maps days offsets from grid's start date, to cell offsets
 
 
 	constructor: function() {
@@ -11,53 +8,30 @@ MonthGrid = Grid.extend({
 		this.cellDuration = moment.duration(1, 'month'); // for Grid system
 	},
 
-	renderDates: function() {
-		var view = this.view;
-		var rowCnt = this.rowCnt;
-		var colCnt = this.colCnt;
-		var cellCnt = rowCnt * colCnt;
-		var html = '';
-		var row;
-		var i, cell;
-
-		for (row = 0; row < rowCnt; row++) {
-			html += this.monthRowHtml(row);
-		}
-		this.el.html(html);
-
-		this.rowEls = this.el.find('.fc-row');
-		this.monthEls = this.el.find('.fc-month');
-
-		// trigger monthRender with each cell's element
-		for (i = 0; i < cellCnt; i++) {
-			cell = this.getCell(i);
-			view.trigger('monthRender', null, cell.start, this.monthEls.eq(i));
-		}
-	},
-
-	destroyDates: function() {
-	},
-
 	// Generates the HTML for a single row. `row` is the row number.
-	monthRowHtml: function(row) {
+	dayRowHtml: function(row, isRigid) {
 		var view = this.view;
 		var classes = [ 'fc-row', view.widgetContentClass ];
+
+		if (isRigid) {
+			classes.push('fc-rigid');
+		}
 
 		return '' +
 			'<div class="' + classes.join(' ') + '">' +
 				'<div class="fc-bg">' +
 					'<table>' +
 						this.rowHtml('month', row) + // leverages RowRenderer. calls monthCellHtml()
-							'</table>' +
-								'</div>' +
-									'<div class="fc-content-skeleton">' +
-										'<table>' +
-											'<thead>' +
-												this.rowHtml('monthName', row) + // leverages RowRenderer. View will define render method
-													'</thead>' +
-														'</table>' +
-															'</div>' +
-																'</div>';
+					'</table>' +
+				'</div>' +
+				'<div class="fc-content-skeleton">' +
+					'<table>' +
+						'<thead>' +
+							this.rowHtml('monthName', row) + // leverages RowRenderer. View will define render method
+						'</thead>' +
+					'</table>' +
+				'</div>' +
+			'</div>';
 	},
 
 	// Renders the HTML for a single-month background cell
@@ -66,7 +40,7 @@ MonthGrid = Grid.extend({
 		var date = cell.start;
 		var classes = this.getMonthClasses(date);
 
-		classes.unshift('fc-month', view.widgetContentClass);
+		classes.unshift('fc-day fc-month', view.widgetContentClass);
 
 		return '<td class="' + classes.join(' ') + '"' +
 			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
@@ -138,73 +112,6 @@ MonthGrid = Grid.extend({
 
 		this.cellDates = dates;
 		this.dayToCellOffsets = offsets;
-	},
-
-	// Given a cell object, generates its start date. Returns a reference-free copy.
-	computeCellDate: function(cell) {
-		var colCnt = this.colCnt;
-		var index = cell.row * colCnt + (this.isRTL ? colCnt - cell.col - 1 : cell.col);
-
-		return this.cellDates[index].clone();
-	},
-
-	/* Dates
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Slices up a date range by row into an array of segments
-	rangeToSegs: function(range) {
-		var isRTL = this.isRTL;
-		var rowCnt = this.rowCnt;
-		var colCnt = this.colCnt;
-		var segs = [];
-		var first, last; // inclusive cell-offset range for given range
-		var row;
-		var rowFirst, rowLast; // inclusive cell-offset range for current row
-		var isStart, isEnd;
-		var segFirst, segLast; // inclusive cell-offset range for segment
-		var seg;
-
-		range = this.view.computeDayRange(range); // make whole-day range, considering nextDayThreshold
-		first = this.dateToCellOffset(range.start);
-		last = this.dateToCellOffset(range.end.subtract(1, 'days')); // offset of inclusive end date
-
-		for (row = 0; row < rowCnt; row++) {
-			rowFirst = row * colCnt;
-			rowLast = rowFirst + colCnt - 1;
-
-			// intersect segment's offset range with the row's
-			segFirst = Math.max(rowFirst, first);
-			segLast = Math.min(rowLast, last);
-
-			// deal with in-between indices
-			segFirst = Math.ceil(segFirst); // in-between starts round to next cell
-			segLast = Math.floor(segLast); // in-between ends round to prev cell
-
-			if (segFirst <= segLast) { // was there any intersection with the current row?
-
-				// must be matching integers to be the segment's start/end
-				isStart = segFirst === first;
-				isEnd = segLast === last;
-
-				// translate offsets to be relative to start-of-row
-				segFirst -= rowFirst;
-				segLast -= rowFirst;
-
-				seg = { row: row, isStart: isStart, isEnd: isEnd };
-				if (isRTL) {
-					seg.leftCol = colCnt - segLast - 1;
-					seg.rightCol = colCnt - segFirst - 1;
-				}
-				else {
-					seg.leftCol = segFirst;
-					seg.rightCol = segLast;
-				}
-				segs.push(seg);
-			}
-		}
-
-		return segs;
 	},
 
 

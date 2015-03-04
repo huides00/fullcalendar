@@ -42,8 +42,6 @@
         "src/basic/BasicWeekView.js",
         "src/basic/BasicDayView.js",
         "src/basic/MonthGrid.js",
-        "src/basic/MonthGrid.events.js",
-        "src/basic/MonthGrid.limit.js",
         "src/basic/YearView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaWeekView.js",

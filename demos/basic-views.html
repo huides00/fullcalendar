@@ -15,8 +15,9 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,basicWeek,basicDay'
+				right: 'year,month,basicWeek,basicDay'
 			},
+			defaultView: 'year',
 			defaultDate: '2015-02-12',
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
@@ -27,7 +28,7 @@
 				},
 				{
 					title: 'Long Event',
-					start: '2015-02-07',
+					start: '2014-12-07',
 					end: '2015-02-10'
 				},
 				{
@@ -42,8 +43,13 @@
 				},
 				{
 					title: 'Conference',
-					start: '2015-02-11',
+					start: '2015-02-10',
 					end: '2015-02-13'
+				},
+				{
+					title: 'Conference',
+					start: '2015-02-21',
+					end: '2015-03-03'
 				},
 				{
 					title: 'Meeting',
@@ -63,17 +69,34 @@
 					start: '2015-02-12T17:30:00'
 				},
 				{
+					title: 'Overnight',
+					start: '2015-02-12T20:30:00',
+					end: '2015-02-13T07:30:00'
+				},
+				{
+					title: 'Lunch',
+					start: '2015-06-12T12:00:00'
+				},
+				{
+					title: 'Meeting',
+					start: '2015-08-12T14:30:00'
+				},
+				{
+					title: 'Happy Hour',
+					start: '2015-10-12T17:30:00'
+				},
+				{
 					title: 'Dinner',
-					start: '2015-02-12T20:00:00'
+					start: '2015-11-12T20:00:00'
 				},
 				{
 					title: 'Birthday Party',
-					start: '2015-02-13T07:00:00'
+					start: '2015-12-13T07:00:00'
 				},
 				{
 					title: 'Click for Google',
 					url: 'http://google.com/',
-					start: '2015-02-28'
+					start: '2015-12-28'
 				}
 			]
 		});

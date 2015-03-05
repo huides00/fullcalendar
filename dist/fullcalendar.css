@@ -1,7 +1,7 @@
 /*!
  * FullCalendar v2.3.0 Stylesheet
- * Docs & License: http://arshaw.com/fullcalendar/
- * (c) 2013 Adam Shaw
+ * Docs & License: http://fullcalendar.io/
+ * (c) 2015 Adam Shaw
  */
 
 
@@ -656,7 +656,7 @@ a.fc-more:hover {
 }
 
 .fc-more-popover {
-	z-index: 2;
+	z-index: 4;
 	width: 220px;
 }
 
@@ -759,6 +759,9 @@ a.fc-more:hover {
 
 .fc-basic-view .fc-body .fc-row {
 	min-height: 4em; /* ensure that all rows are at least this tall */
+}
+.fc-year-view .fc-body .fc-row {
+	min-height: 6em;
 }
 
 /* a "rigid" row will take up a constant amount of height because content-skeleton is absolute */

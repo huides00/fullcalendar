@@ -1,4 +1,4 @@
-YearView = fcViews.year = BasicView.extend({ // make a subclass of View
+var YearView = fcViews.year = BasicView.extend({ // make a subclass of View
 
 	initialize: function() {
 		this.dayGrid = new MonthGrid(this);
@@ -35,9 +35,7 @@ YearView = fcViews.year = BasicView.extend({ // make a subclass of View
 					'</tr>' +
 				'</tbody>' +
 			'</table>';
-	},
-
-
+	}
 });
 
 

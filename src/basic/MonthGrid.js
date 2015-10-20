@@ -142,7 +142,7 @@ var MonthGrid = DayGrid.extend({
 	// Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
 	dateToCellOffset: function(date) {
 		var offsets = this.dayToCellOffsets;
-		var month = date.diff(this.start, 'months');
+		var month = date.diff(this.start, 'months', true);
 
 		if (month < 0) {
 			return offsets[0] - 1;
@@ -151,7 +151,7 @@ var MonthGrid = DayGrid.extend({
 			return offsets[offsets.length - 1] + 1;
 		}
 		else {
-			return offsets[month];
+			return offsets[Math.floor(month)];
 		}
 	},
 

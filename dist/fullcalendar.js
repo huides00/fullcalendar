@@ -1,7 +1,7 @@
-/*!
+/*
  * FullCalendar v2.3.0 with year view
- * Docs & License: http://fullcalendar.io/
- * (c) 2015 Adam Shaw
+ * Docs & License: http://arshaw.com/fullcalendar/
+ * (c) 2013 Adam Shaw
  */
 
 (function(factory) {
